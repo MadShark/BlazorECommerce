@@ -2,7 +2,11 @@
 {
     public interface IProductService
     {
-        List<Product> ListProducts { get; set; }
+        // Properties
+        List<Product> listProducts { get; set; }
+
+        // Methods
         Task GetAllProducts();
+        Task<ServiceResponse<Product>> GetProductById(int ProductId);
     }
 }
