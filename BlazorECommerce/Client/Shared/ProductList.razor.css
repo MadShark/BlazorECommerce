@@ -1,6 +1,7 @@
 ﻿.media-img {
     max-height: 200px;
-    max-width: 200px;
+    max-width: 150px;
+    height: 200px;
     border-radius: 6px;
     margin-bottom: 10px;
     transition: transform .2s;

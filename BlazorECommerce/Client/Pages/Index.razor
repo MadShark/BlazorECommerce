@@ -1,5 +1,28 @@
 ﻿@page "/"
+@page "/{CategoryUrl}"
+@page "/search/{FilterSearch}"
+@inject IProductService productService
+
 
 <PageTitle>My Shop</PageTitle>
 
 <ProductList />
+
+
+@code{
+    [Parameter]
+    public string? CategoryUrl { get; set; } = null;
+
+    [Parameter]
+    public string? FilterSearch { get; set; } = null;
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (FilterSearch != null)
+            await productService.SearchProductsByFilter(FilterSearch);
+        else
+            await productService.GetAllProducts(CategoryUrl);
+    }
+}
