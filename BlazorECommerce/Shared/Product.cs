@@ -17,10 +17,12 @@ namespace BlazorECommerce.Shared
 
         public string ImageUrl { get; set; } = string.Empty;
 
-        public List<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
-
         public Category? Category { get; set; }
 
         public int CategoryId { get; set; }
+
+        public bool Featured { get; set; }
+
+        public List<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
     }
 }

@@ -60,7 +60,8 @@ namespace BlazorECommerce.Server.Data
                         Description = @" is a science fiction novel by American writer Isaac Asimov. It is the first published in his Foundation Trilogy
                                          (later expanded into the Foundation series). Foundation is a cycle of five interrelated short stories",
                         ImageUrl = "https://upload.wikimedia.org/wikipedia/en/2/25/Foundation_gnome.jpg",
-                        CategoryId = 1
+                        CategoryId = 1,
+                        Featured = true
                     },
                     new Product()
                     {
@@ -87,7 +88,8 @@ namespace BlazorECommerce.Server.Data
                         Description = @"set in a dystopian future where humanity is struggling to survive, the film follows a group of astronauts who
                                         travel through a wormhole near Saturn in search of a new home for mankind.",
                         ImageUrl = "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg",
-                        CategoryId = 2
+                        CategoryId = 2,
+                        Featured = true
                     },
                     new Product()
                     {
@@ -116,7 +118,8 @@ namespace BlazorECommerce.Server.Data
                         Description = @"is an action role-playing video game developed and published by CD Projekt. The story takes place in Night City,
                                         an open world set in the Cyberpunk universe.",
                         ImageUrl = "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Cyberpunk_2077_box_art.jpg/220px-Cyberpunk_2077_box_art.jpg",
-                        CategoryId = 3
+                        CategoryId = 3,
+                        Featured = true
                     },
                     new Product()
                     {
@@ -273,5 +276,6 @@ namespace BlazorECommerce.Server.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<ProductType> ProductTypes { get; set; }
         public DbSet<ProductVariant> ProductVariants { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
