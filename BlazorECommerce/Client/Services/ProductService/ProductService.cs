@@ -11,6 +11,9 @@
 
         public List<Product> listProducts { get; set; } = new List<Product>();
         public string Message { get; set; } = "Loading Products...";
+        public int CurrentPage { get; set; } = 1;
+        public int PageCount { get; set; } = 0;
+        public string LastSearchText { get; set; } = string.Empty;
 
         public event Action OnProductsChanged;
 
@@ -18,10 +21,16 @@
         public async Task GetAllProducts(string? CategoryUrl = null)
         {
             var result = CategoryUrl == null 
-                        ? await _httpClient.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/product") 
+                        ? await _httpClient.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/product/featured") 
                         : await _httpClient.GetFromJsonAsync<ServiceResponse<List<Product>>>($"api/product/category/{CategoryUrl}");
             if (result != null && result.Data != null)
                 listProducts = result.Data;
+
+            CurrentPage = 1;
+            PageCount = 0;
+
+            if (listProducts.Count == 0)
+                Message = "No products found";
 
             OnProductsChanged.Invoke();
         }
@@ -32,12 +41,17 @@
             return result;
         }
 
-        public async Task SearchProductsByFilter(string FilterSearch)
+        public async Task SearchProductsByFilter(string FilterSearch, int PageNumber)
         {
-            var result = await _httpClient.GetFromJsonAsync<ServiceResponse<List<Product>>>($"api/product/search/{FilterSearch}");
+            LastSearchText = FilterSearch;
+            var result = await _httpClient.GetFromJsonAsync<ServiceResponse<ProductSearchResultDTO>>($"api/product/search/{FilterSearch}/{PageNumber}");
 
             if (result != null && result.Data != null)
-                listProducts = result.Data;
+            {
+                listProducts = result.Data.ListProducts;
+                CurrentPage = result.Data.CurrentPage;
+                PageCount = result.Data.Pages;
+            }
 
             if (listProducts.Count == 0)
                 Message = "No products found";
