@@ -15,9 +15,9 @@ namespace BlazorECommerce.Server.Services.OrderService
             _authService = authService;
         }
 
-        public async Task<ServiceResponse<bool>> PlaceOrderAsync()
+        public async Task<ServiceResponse<bool>> PlaceOrderAsync(int UserId)
         {
-            var products = (await _cartService.GetDbCartProductsAsync()).Data;
+            var products = (await _cartService.GetDbCartProductsAsync(UserId)).Data;
             decimal totalPrice = 0;
             products.ForEach(product => totalPrice += product.Price * product.Quantity);
 
@@ -31,7 +31,7 @@ namespace BlazorECommerce.Server.Services.OrderService
 
             var order = new Order
             {
-                UserId = _authService.GetUserId(),
+                UserId = UserId,
                 OrderDate = DateTime.Now,
                 TotalPrice = totalPrice,
                 OrderItems = orderItems
@@ -39,7 +39,7 @@ namespace BlazorECommerce.Server.Services.OrderService
 
             _context.Orders.Add(order);
 
-            _context.CartItems.RemoveRange(_context.CartItems.Where(ci => ci.UserId == _authService.GetUserId()));
+            _context.CartItems.RemoveRange(_context.CartItems.Where(ci => ci.UserId == UserId));
 
             await _context.SaveChangesAsync();
 

@@ -1,6 +1,8 @@
 ﻿@page "/cart"
 @inject ICartService CartService
 @inject IOrderService OrderService
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
 
 <PageTitle>Shopping Cart</PageTitle>
 
@@ -9,10 +11,6 @@
 @if (CartProducts == null || CartProducts.Count == 0)
 {
     <span>@Message</span>
-}
-else if (OrderPlaced)
-{
-    <span>Thank you for your order! You can check it out <a href="orders">here</a>!</span>
 }
 else
 {
@@ -44,17 +42,24 @@ else
             Total (@CartProducts.Count): $@CartProducts.Sum(product => @product.Price * product.Quantity)
         </div>
     </div>
-    <button @onclick="PlaceOrder" class="btn alert-success float-end mt-1">Place Order</button>
+    @if (IsAuthenticated)
+    {
+        <div>
+            <h5>Delivery Address</h5>
+            <AddressForm />
+        </div>
+    }
+    <button @onclick="PlaceOrder" class="btn alert-success float-end mt-1">Checkout</button>
 }
 
 @code {
-    private List<CartProductResponseDTO> CartProducts = null;
-    private string Message = "Loading Cart...";
-    bool OrderPlaced = false;
+    List<CartProductResponseDTO> CartProducts = null;
+    string Message = "Loading Cart...";
+    bool IsAuthenticated = false;
 
     protected override async Task OnInitializedAsync()
     {
-        OrderPlaced = false;
+        IsAuthenticated = await AuthService.IsUserAuthenticated();
         await LoadCart();
     }
 
@@ -84,8 +89,7 @@ else
 
     private async Task PlaceOrder()
     {
-        await OrderService.PlaceOrder();
-        await CartService.GetCartItemsCount();
-        OrderPlaced = true;
+        string url = await OrderService.PlaceOrder();
+        NavigationManager.NavigateTo(url);
     }
 }
