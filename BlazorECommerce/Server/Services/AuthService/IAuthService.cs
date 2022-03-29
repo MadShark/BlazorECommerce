@@ -7,5 +7,7 @@
         Task<ServiceResponse<string>> LoginAsync(string Email, string Password);
         Task<ServiceResponse<bool>> ChangePasswordAsync(int UserId, string NewPassword);
         int GetUserId();
+        string GetUserEmail();
+        Task<User> GetUserByEmail(string email);
     }
 }
