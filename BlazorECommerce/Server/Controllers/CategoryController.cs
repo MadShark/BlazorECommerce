@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorECommerce.Server.Controllers
@@ -21,17 +22,32 @@ namespace BlazorECommerce.Server.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{CategoryId}")]
-        public async Task<ActionResult<ServiceResponse<Category>>> GetCategoryById(int CategoryId)
+        [HttpGet("admin"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Category>>>> GetAdminCategoriesAsync()
         {
-            var result = await _categoryService.GetCategoryByIdAsync(CategoryId);
+            var result = await _categoryService.GetAdminCategoriesAsync();
+            return Ok(result);
+        }
 
-            if (result != null && result.Data != null)
-            {
-                return Ok(result);
-            }
+        [HttpPost("admin"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Category>>>> AddCategoryAsync(Category Category)
+        {
+            var result = await _categoryService.AddCategoryAsync(Category);
+            return Ok(result);
+        }
 
-            return NotFound(result);
+        [HttpPut("admin"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Category>>>> UpdateCategoryAsync(Category Category)
+        {
+            var result = await _categoryService.UpdateCategoryAsync(Category);
+            return Ok(result);
+        }
+
+        [HttpDelete("admin/{CategoryId}"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ServiceResponse<List<Category>>>> DeleteCategoryAsync(int CategoryId)
+        {
+            var result = await _categoryService.DeleteCategoryAsync(CategoryId);
+            return Ok(result);
         }
     }
 }
