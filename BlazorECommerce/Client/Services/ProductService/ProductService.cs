@@ -10,6 +10,7 @@
 
 
         public List<Product> listProducts { get; set; } = new List<Product>();
+        public List<Product> adminProducts { get; set; } = new List<Product>();
         public string Message { get; set; } = "Loading Products...";
         public int CurrentPage { get; set; } = 1;
         public int PageCount { get; set; } = 0;
@@ -33,6 +34,16 @@
                 Message = "No products found";
 
             OnProductsChanged.Invoke();
+        }
+
+        public async Task GetAdminProducts()
+        {
+            var result = await _httpClient.GetFromJsonAsync<ServiceResponse<List<Product>>>("api/product/admin");
+            adminProducts = result.Data;
+            CurrentPage = 1;
+            PageCount = 0;
+            if (adminProducts.Count == 0)
+                Message = "No products found.";
         }
 
         public async Task<ServiceResponse<Product>> GetProductById(int ProductId)
@@ -64,5 +75,25 @@
             var result = await _httpClient.GetFromJsonAsync<ServiceResponse<List<string>>>($"api/product/suggestions/{SuggestionSearch}");
             return result.Data;
         }
+
+        public async Task<Product> CreateProduct(Product Product)
+        {
+            var result = await _httpClient.PostAsJsonAsync("api/product", Product);
+            var newProduct = (await result.Content.ReadFromJsonAsync<ServiceResponse<Product>>()).Data;
+            return newProduct;
+        }
+
+        public async Task<Product> UpdateProduct(Product Product)
+        {
+            var result = await _httpClient.PutAsJsonAsync($"api/product", Product);
+            return (await result.Content.ReadFromJsonAsync<ServiceResponse<Product>>()).Data;
+        }
+
+        public async Task DeleteProduct(Product Product)
+        {
+            var result = await _httpClient.DeleteAsync($"api/product/{Product.Id}");
+        }
+
+
     }
 }
